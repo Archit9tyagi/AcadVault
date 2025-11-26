@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - AcadVault{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0">My Dashboard</h2>
+        <a href="{% url 'upload_note' %}" class="btn btn-primary">
+            <i class="bi bi-plus-lg me-2"></i>Upload New Note
+        </a>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm bg-primary text-white h-100">
+                <div class="card-body">
+                    <h5 class="card-title opacity-75">My Uploads</h5>
+                    <h2 class="display-4 fw-bold mb-0">{{ total_uploads }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm bg-success text-white h-100">
+                <div class="card-body">
+                    <h5 class="card-title opacity-75">Total Downloads</h5>
+                    <h2 class="display-4 fw-bold mb-0">{{ total_downloads }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm bg-info text-white h-100">
+                <div class="card-body">
+                    <h5 class="card-title opacity-75">Reviews Given</h5>
+                    <h2 class="display-4 fw-bold mb-0">{{ user_reviews.count }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Uploaded Notes List -->
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3">
+            <h5 class="fw-bold mb-0">My Uploaded Notes</h5>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Title</th>
+                        <th>Subject</th>
+                        <th>Branch</th>
+                        <th>Downloads</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for note in user_notes %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'note_detail' note.pk %}" class="fw-bold text-decoration-none text-dark">{{
+                                note.title }}</a>
+                        </td>
+                        <td>{{ note.subject }}</td>
+                        <td><span class="badge bg-light text-dark border">{{ note.branch }}</span></td>
+                        <td>{{ note.download_count }}</td>
+                        <td class="text-muted small">{{ note.upload_date|date:"M d, Y" }}</td>
+                        <td>
+                            <a href="{% url 'note_detail' note.pk %}" class="btn btn-sm btn-outline-primary">View</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-4 text-muted">
+                            You haven't uploaded any notes yet.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

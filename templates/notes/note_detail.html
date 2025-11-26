@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{ note.title }} - AcadVault{% endblock %}
+
+{% block content %}
+<div class="container">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'note_list' %}">Notes</a></li>
+            <li class="breadcrumb-item active">{{ note.title }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Note Details -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h1 class="h2 fw-bold mb-2">{{ note.title }}</h1>
+                            <p class="text-muted mb-0">{{ note.subject }}</p>
+                        </div>
+                        <span class="badge bg-primary fs-6">{{ note.get_branch_display }}</span>
+                    </div>
+
+                    <div class="d-flex gap-3 text-muted small mb-4 border-bottom pb-3">
+                        <span><i class="bi bi-calendar3"></i> {{ note.upload_date|date:"F d, Y" }}</span>
+                        <span><i class="bi bi-person"></i> {{ note.uploader.username }}</span>
+                        <span><i class="bi bi-mortarboard"></i> Year {{ note.year }}</span>
+                        <span><i class="bi bi-file-earmark-pdf"></i> {{ note.file_size_mb }} MB</span>
+                    </div>
+
+                    <h5 class="fw-bold mb-3">Description</h5>
+                    <p class="text-muted mb-4">{{ note.description|linebreaks }}</p>
+
+                    <div class="d-flex gap-3">
+                        <a href="{% url 'download_note' note.pk %}" class="btn btn-primary btn-lg">
+                            <i class="bi bi-download me-2"></i> Download PDF
+                        </a>
+                        <button class="btn btn-outline-secondary btn-lg" disabled>
+                            <i class="bi bi-eye me-2"></i> Preview
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reviews Section -->
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h4 class="fw-bold mb-4">Reviews & Ratings</h4>
+
+                    {% if user.is_authenticated and not user_has_reviewed %}
+                    <div class="mb-5">
+                        <h6 class="mb-3">Leave a Review</h6>
+                        <form method="post">
+                            {% csrf_token %}
+                            {{ review_form|crispy }}
+                            <button type="submit" class="btn btn-primary mt-3">Submit Review</button>
+                        </form>
+                    </div>
+                    {% endif %}
+
+                    <div class="reviews-list">
+                        {% for review in reviews %}
+                        <div class="border-bottom pb-3 mb-3 last:border-0">
+                            <div class="d-flex justify-content-between mb-2">
+                                <h6 class="fw-bold mb-0">{{ review.user.username }}</h6>
+                                <div class="text-warning small">
+                                    {% with ''|center:5 as range %}
+                                    {% for _ in range %}
+                                    <i class="bi bi-star{% if forloop.counter <= review.rating %}-fill{% endif %}"></i>
+                                    {% endfor %}
+                                    {% endwith %}
+                                </div>
+                            </div>
+                            <p class="text-muted small mb-1">{{ review.comment }}</p>
+                            <small class="text-muted-light" style="font-size: 0.75rem;">{{ review.created_at|timesince
+                                }} ago</small>
+                        </div>
+                        {% empty %}
+                        <p class="text-muted">No reviews yet. Be the first to review!</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Sidebar -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body">
+                    <h5 class="fw-bold mb-3">Stats</h5>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Downloads</span>
+                        <span class="fw-bold">{{ note.download_count }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Rating</span>
+                        <span class="fw-bold text-warning">
+                            {{ note.average_rating|floatformat:1 }} <i class="bi bi-star-fill"></i>
+                        </span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span class="text-muted">Reviews</span>
+                        <span class="fw-bold">{{ reviews.count }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

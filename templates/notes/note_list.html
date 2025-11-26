@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Browse Notes - AcadVault{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <!-- Filters -->
+        <div class="col-lg-3 mb-4">
+            <div class="card shadow-sm border-0 sticky-top" style="top: 5rem;">
+                <div class="card-body">
+                    <h5 class="fw-bold mb-3">Filter Notes</h5>
+                    <form method="get">
+                        <div class="mb-3">
+                            <label class="form-label small text-muted">Search</label>
+                            <input type="text" name="search" class="form-control" value="{{ search_query }}"
+                                placeholder="Title, subject...">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small text-muted">Branch</label>
+                            <select name="branch" class="form-select">
+                                <option value="">All Branches</option>
+                                {% for code, name in branch_choices %}
+                                <option value="{{ code }}" {% if branch_filter==code %}selected{% endif %}>{{ name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small text-muted">Year</label>
+                            <select name="year" class="form-select">
+                                <option value="">All Years</option>
+                                {% for code, name in year_choices %}
+                                <option value="{{ code }}" {% if year_filter|add:"0"==code %}selected{% endif %}>{{ name
+                                    }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Apply Filters</button>
+                            <a href="{% url 'note_list' %}" class="btn btn-outline-secondary">Clear</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Note Grid -->
+        <div class="col-lg-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="fw-bold mb-0">
+                    {% if search_query or branch_filter or year_filter %}
+                    Search Results
+                    {% else %}
+                    All Notes
+                    {% endif %}
+                </h4>
+                <span class="text-muted">{{ notes.count }} notes found</span>
+            </div>
+
+            <div class="row g-4">
+                {% for note in notes %}
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-sm border-0">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="badge bg-light text-primary border">{{ note.get_branch_display }}</span>
+                                <small class="text-muted">{{ note.upload_date|date:"M d, Y" }}</small>
+                            </div>
+                            <h5 class="card-title fw-bold">
+                                <a href="{% url 'note_detail' note.pk %}"
+                                    class="text-decoration-none text-dark stretched-link">{{ note.title }}</a>
+                            </h5>
+                            <p class="text-muted small mb-2">{{ note.subject }} • Year {{ note.year }}</p>
+                            <p class="card-text text-muted small text-truncate">{{ note.description }}</p>
+
+                            <div class="d-flex align-items-center mt-3">
+                                <div class="text-warning small me-2">
+                                    {% with ''|center:5 as range %}
+                                    {% for _ in range %}
+                                    <i
+                                        class="bi bi-star{% if forloop.counter <= note.average_rating|add:'0.5' %}-fill{% endif %}"></i>
+                                    {% endfor %}
+                                    {% endwith %}
+                                </div>
+                                <small class="text-muted">({{ note.reviews.count }})</small>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-white border-top-0 pt-0">
+                            <div class="d-flex justify-content-between align-items-center small text-muted">
+                                <span><i class="bi bi-person"></i> {{ note.uploader.username }}</span>
+                                <span><i class="bi bi-download"></i> {{ note.download_count }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        No notes found matching your criteria.
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
