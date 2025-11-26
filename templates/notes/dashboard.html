@@ -4,44 +4,65 @@
 
 {% block content %}
 <div class="container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold mb-0">My Dashboard</h2>
-        <a href="{% url 'upload_note' %}" class="btn btn-primary">
-            <i class="bi bi-plus-lg me-2"></i>Upload New Note
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h2 class="fw-bold mb-1">Welcome, {{ user.username }}!</h2>
+            <p class="text-muted">Manage your notes and account from here.</p>
+        </div>
+        <a href="{% url 'logout' %}" class="btn btn-outline-danger">
+            <i class="bi bi-box-arrow-right me-2"></i>Logout
         </a>
     </div>
 
-    <!-- Stats Cards -->
+    <!-- Action Grid -->
     <div class="row g-4 mb-5">
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm bg-primary text-white h-100">
-                <div class="card-body">
-                    <h5 class="card-title opacity-75">My Uploads</h5>
-                    <h2 class="display-4 fw-bold mb-0">{{ total_uploads }}</h2>
+        <!-- Upload Notes -->
+        <div class="col-md-6 col-lg-4">
+            <a href="{% url 'upload_note' %}" class="text-decoration-none">
+                <div class="card h-100 shadow-sm border-0 hover-card">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex p-3 mb-3">
+                            <i class="bi bi-cloud-upload fs-2 text-primary"></i>
+                        </div>
+                        <h5 class="fw-bold text-dark">Upload Notes</h5>
+                        <p class="text-muted small mb-0">Share your knowledge with others by uploading PDF notes.</p>
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm bg-success text-white h-100">
-                <div class="card-body">
-                    <h5 class="card-title opacity-75">Total Downloads</h5>
-                    <h2 class="display-4 fw-bold mb-0">{{ total_downloads }}</h2>
+
+        <!-- Browse Notes -->
+        <div class="col-md-6 col-lg-4">
+            <a href="{% url 'note_list' %}" class="text-decoration-none">
+                <div class="card h-100 shadow-sm border-0 hover-card">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex p-3 mb-3">
+                            <i class="bi bi-search fs-2 text-success"></i>
+                        </div>
+                        <h5 class="fw-bold text-dark">Browse Notes</h5>
+                        <p class="text-muted small mb-0">Find notes by branch, year, or subject.</p>
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm bg-info text-white h-100">
-                <div class="card-body">
-                    <h5 class="card-title opacity-75">Reviews Given</h5>
-                    <h2 class="display-4 fw-bold mb-0">{{ user_reviews.count }}</h2>
+
+        <!-- My Uploads -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body text-center p-4">
+                    <div class="bg-info bg-opacity-10 rounded-circle d-inline-flex p-3 mb-3">
+                        <i class="bi bi-folder2-open fs-2 text-info"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark">My Uploads</h5>
+                    <p class="text-muted small mb-0">{{ total_uploads }} notes uploaded</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Uploaded Notes List -->
+    <!-- My Uploaded Notes Table -->
     <div class="card shadow-sm border-0">
-        <div class="card-header bg-white py-3">
+        <div class="card-header bg-white py-3 border-bottom">
             <h5 class="fw-bold mb-0">My Uploaded Notes</h5>
         </div>
         <div class="table-responsive">
@@ -64,7 +85,7 @@
                                 note.title }}</a>
                         </td>
                         <td>{{ note.subject }}</td>
-                        <td><span class="badge bg-light text-dark border">{{ note.branch }}</span></td>
+                        <td><span class="badge bg-light text-dark border">{{ note.get_branch_display }}</span></td>
                         <td>{{ note.download_count }}</td>
                         <td class="text-muted small">{{ note.upload_date|date:"M d, Y" }}</td>
                         <td>
@@ -73,8 +94,12 @@
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="6" class="text-center py-4 text-muted">
-                            You haven't uploaded any notes yet.
+                        <td colspan="6" class="text-center py-5 text-muted">
+                            <div class="mb-3">
+                                <i class="bi bi-journal-x fs-1 text-muted opacity-50"></i>
+                            </div>
+                            <p class="mb-0">You haven't uploaded any notes yet.</p>
+                            <a href="{% url 'upload_note' %}" class="btn btn-sm btn-primary mt-3">Upload First Note</a>
                         </td>
                     </tr>
                     {% endfor %}
@@ -83,4 +108,14 @@
         </div>
     </div>
 </div>
+
+<style>
+    .hover-card {
+        transition: transform 0.2s ease-in-out;
+    }
+
+    .hover-card:hover {
+        transform: translateY(-5px);
+    }
+</style>
 {% endblock %}

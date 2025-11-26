@@ -118,7 +118,7 @@ def upload_note(request):
             note.uploader = request.user
             note.save()
             messages.success(request, 'Note uploaded successfully!')
-            return redirect('note_detail', pk=note.pk)
+            return redirect('dashboard')
     else:
         form = NoteUploadForm()
     
