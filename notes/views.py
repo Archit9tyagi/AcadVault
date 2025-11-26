@@ -91,6 +91,8 @@ def note_detail(request, pk):
     return render(request, 'notes/note_detail.html', context)
 
 
+import os
+
 @login_required
 def download_note(request, pk):
     """Download a note file and increment download count."""
@@ -100,7 +102,7 @@ def download_note(request, pk):
     note.save()
     
     try:
-        return FileResponse(note.file.open('rb'), as_attachment=True, filename=note.file.name)
+        return FileResponse(note.file.open('rb'), as_attachment=True, filename=os.path.basename(note.file.name))
     except Exception as e:
         messages.error(request, f'Error downloading file: {str(e)}')
         return redirect('note_detail', pk=pk)
