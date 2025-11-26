@@ -23,7 +23,7 @@
                             <select name="branch" class="form-select">
                                 <option value="">All Branches</option>
                                 {% for code, name in branch_choices %}
-                                <option value="{{ code }}" {% if branch_filter==code %}selected{% endif %}>{{ name }}
+                                <option value="{{ code }}" {% if branch_filter == code %}selected{% endif %}>{{ name }}
                                 </option>
                                 {% endfor %}
                             </select>
@@ -34,7 +34,7 @@
                             <select name="year" class="form-select">
                                 <option value="">All Years</option>
                                 {% for code, name in year_choices %}
-                                <option value="{{ code }}" {% if year_filter|add:"0"==code %}selected{% endif %}>{{ name
+                                <option value="{{ code }}" {% if year_filter|add:"0" == code %}selected{% endif %}>{{ name
                                     }}</option>
                                 {% endfor %}
                             </select>
