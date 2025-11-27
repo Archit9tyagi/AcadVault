@@ -26,6 +26,7 @@ class NoteUploadForm(forms.ModelForm):
         fields = ['title', 'description', 'branch', 'year', 'subject', 'file']
         widgets = {
             'description': forms.Textarea(attrs={'rows': 4}),
+            'year': forms.Select(attrs={'class': 'form-select'}),
         }
     
     def clean_file(self):

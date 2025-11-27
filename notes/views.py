@@ -186,3 +186,20 @@ def logout_view(request):
     logout(request)
     messages.info(request, 'You have been logged out.')
     return redirect('home')
+
+
+@login_required
+def delete_note(request, pk):
+    """Delete a note uploaded by the current user."""
+    note = get_object_or_404(Note, pk=pk)
+    
+    if request.user != note.uploader:
+        messages.error(request, 'You are not authorized to delete this note.')
+        return redirect('note_detail', pk=pk)
+    
+    if request.method == 'POST':
+        note.delete()
+        messages.success(request, 'Note deleted successfully.')
+        return redirect('dashboard')
+    
+    return redirect('note_detail', pk=pk)

@@ -9,6 +9,7 @@ urlpatterns = [
     path('notes/', views.note_list, name='note_list'),
     path('notes/<int:pk>/', views.note_detail, name='note_detail'),
     path('notes/<int:pk>/download/', views.download_note, name='download_note'),
+    path('notes/<int:pk>/delete/', views.delete_note, name='delete_note'),
     path('upload-notes/', views.upload_note, name='upload_note'),
     
     # User dashboard
