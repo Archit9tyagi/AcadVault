@@ -10,6 +10,7 @@ urlpatterns = [
     path('notes/<int:pk>/', views.note_detail, name='note_detail'),
     path('notes/<int:pk>/download/', views.download_note, name='download_note'),
     path('notes/<int:pk>/delete/', views.delete_note, name='delete_note'),
+    path('premium-notes/', views.premium_notes, name='premium_notes'),
     path('upload-notes/', views.upload_note, name='upload_note'),
     
     # User dashboard

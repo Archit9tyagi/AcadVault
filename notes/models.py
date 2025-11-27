@@ -33,6 +33,7 @@ class Note(models.Model):
     uploader = models.ForeignKey(User, on_delete=models.CASCADE, related_name='uploaded_notes')
     upload_date = models.DateTimeField(auto_now_add=True)
     download_count = models.IntegerField(default=0)
+    is_premium_preview = models.BooleanField(default=False, help_text="If True, this note is premium preview only and cannot be downloaded.")
     
     class Meta:
         ordering = ['-upload_date']

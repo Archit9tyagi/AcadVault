@@ -111,6 +111,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'upload_note' %}">Upload Notes</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'premium_notes' %}">Premium Notes</a>
+                    </li>
                     {% if user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>

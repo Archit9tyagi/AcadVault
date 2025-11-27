@@ -101,6 +101,10 @@ def download_note(request, pk):
     note.download_count += 1
     note.save()
     
+    if note.is_premium_preview:
+        messages.error(request, 'This is a Premium Preview-Only note and cannot be downloaded.')
+        return redirect('note_detail', pk=pk)
+    
     try:
         return FileResponse(note.file.open('rb'), as_attachment=True, filename=os.path.basename(note.file.name))
     except Exception as e:
@@ -193,7 +197,7 @@ def delete_note(request, pk):
     """Delete a note uploaded by the current user."""
     note = get_object_or_404(Note, pk=pk)
     
-    if request.user != note.uploader:
+    if request.user != note.uploader and not request.user.is_superuser:
         messages.error(request, 'You are not authorized to delete this note.')
         return redirect('note_detail', pk=pk)
     
@@ -202,4 +206,29 @@ def delete_note(request, pk):
         messages.success(request, 'Note deleted successfully.')
         return redirect('dashboard')
     
+    
     return redirect('note_detail', pk=pk)
+
+
+def premium_notes(request):
+    """View to display premium notes."""
+    # Preview-only notes (manually marked)
+    preview_notes = Note.objects.filter(is_premium_preview=True)
+    
+    # Premium downloadable notes (based on stats)
+    # Criteria: rating_count >= 10, avg_rating >= 4.5, downloads >= 50
+    downloadable_notes = Note.objects.annotate(
+        rating_count=Count('reviews'),
+        avg_rating=Avg('reviews__rating')
+    ).filter(
+        rating_count__gte=10,
+        avg_rating__gte=4.5,
+        download_count__gte=50,
+        is_premium_preview=False
+    )
+    
+    context = {
+        'preview_notes': preview_notes,
+        'downloadable_notes': downloadable_notes,
+    }
+    return render(request, 'notes/premium_notes.html', context)
