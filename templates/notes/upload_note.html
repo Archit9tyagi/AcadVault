@@ -1,64 +1,108 @@
 {% extends 'base.html' %}
-{% load crispy_forms_tags %}
 
 {% block title %}Upload Note - AcadVault{% endblock %}
 
 {% block content %}
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-white py-3 border-bottom">
-                    <h4 class="fw-bold mb-0 text-center">Upload New Note</h4>
-                </div>
-                <div class="card-body p-4">
-                    <form method="post" enctype="multipart/form-data">
-                        {% csrf_token %}
-
-                        <div class="row g-3">
-                            <div class="col-md-12">
-                                {{ form.title|as_crispy_field }}
-                            </div>
-
-                            <div class="col-md-6">
-                                {{ form.subject|as_crispy_field }}
-                            </div>
-
-                            <div class="col-md-6">
-                                {{ form.branch|as_crispy_field }}
-                            </div>
-
-                            <div class="col-md-6">
-                                {{ form.year|as_crispy_field }}
-                            </div>
-
-                            <div class="col-md-12">
-                                {{ form.description|as_crispy_field }}
-                            </div>
-
-                            <div class="col-md-12">
-                                <div class="card bg-light border-dashed">
-                                    <div class="card-body">
-                                        {{ form.file|as_crispy_field }}
-                                        <div class="form-text text-muted">
-                                            <i class="bi bi-info-circle me-1"></i> Accepted formats: PDF only. Max size:
-                                            10MB.
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="d-grid gap-2 mt-4">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="bi bi-cloud-upload me-2"></i>Upload Note
-                            </button>
-                            <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">Cancel</a>
-                        </div>
-                    </form>
-                </div>
+        <div class="col-lg-6">
+            <div class="d-flex align-items-center gap-3 mb-4">
+                <a href="{% url 'dashboard' %}"
+                    class="btn btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center"
+                    style="width: 40px; height: 40px;">
+                    <i class="bi bi-arrow-left"></i>
+                </a>
+                <h4 class="fw-bold mb-0">Upload New Notes</h4>
             </div>
+
+            <p class="text-muted mb-4">Share your knowledge with the community.</p>
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                {% if form.errors %}
+                <div class="alert alert-danger small py-2 mb-3">
+                    {{ form.non_field_errors }}
+                    {% for field in form %}
+                    {% for error in field.errors %}
+                    {{ error }}
+                    {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- File Upload Area -->
+                <div class="card bg-transparent border border-primary border-opacity-50 border-dashed mb-4"
+                    style="border-style: dashed !important;">
+                    <div class="card-body text-center py-5">
+                        <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex p-3 mb-3">
+                            <i class="bi bi-file-earmark-arrow-up fs-1 text-primary"></i>
+                        </div>
+                        <h5 class="fw-bold mb-1">Note File</h5>
+                        <p class="text-muted small mb-3">Tap to select your PDF. Max file size 50MB.</p>
+
+                        <div class="position-relative">
+                            <button type="button" class="btn btn-secondary px-4"
+                                onclick="document.getElementById('id_file').click()">Select File</button>
+                            <input type="file" name="file"
+                                class="form-control position-absolute top-0 start-0 w-100 h-100 opacity-0" id="id_file"
+                                required style="cursor: pointer;">
+                        </div>
+                        <div id="file-name" class="mt-2 text-primary small fw-bold"></div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold small">Title</label>
+                    <input type="text" name="title" class="form-control"
+                        placeholder="e.g., Introduction to Thermodynamics - Ch 4" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold small">Description</label>
+                    <textarea name="description" class="form-control" rows="4"
+                        placeholder="e.g., Key concepts, formulas, and diagrams covered." required></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold small">Branch</label>
+                    <select name="branch" class="form-select" required>
+                        <option value="" selected disabled>Select Branch</option>
+                        {% for code, name in form.fields.branch.choices %}
+                        {% if code %}
+                        <option value="{{ code }}">{{ name }}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold small">Year</label>
+                    <select name="year" class="form-select" required>
+                        <option value="" selected disabled>Select Year</option>
+                        {% for code, name in form.fields.year.choices %}
+                        {% if code %}
+                        <option value="{{ code }}">{{ name }}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-bold small">Subject</label>
+                    <input type="text" name="subject" class="form-control" placeholder="e.g. Data Structures" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 py-3 fw-bold mb-5">Upload Notes</button>
+            </form>
         </div>
     </div>
 </div>
+
+<script>
+    document.getElementById('id_file').addEventListener('change', function (e) {
+        var fileName = e.target.files[0].name;
+        document.getElementById('file-name').textContent = 'Selected: ' + fileName;
+    });
+</script>
 {% endblock %}

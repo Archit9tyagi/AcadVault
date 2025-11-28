@@ -2,81 +2,60 @@
 
 {% block content %}
 <div class="container">
-    <!-- Hero Section -->
-    <div class="row align-items-center py-5 mb-5">
-        <div class="col-lg-6">
-            <h1 class="display-4 fw-bold mb-4 text-primary">Share & Discover Academic Resources</h1>
-            <p class="lead text-muted mb-4">Access high-quality study notes, past papers, and resources shared by
-                students from all branches. Join our community today.</p>
-            <div class="d-flex gap-3">
-                <a href="{% url 'note_list' %}" class="btn btn-primary btn-lg px-4">Browse Notes</a>
-                {% if not user.is_authenticated %}
-                <a href="{% url 'signup' %}" class="btn btn-outline-secondary btn-lg px-4">Join Now</a>
-                {% else %}
-                <a href="{% url 'upload_note' %}" class="btn btn-outline-secondary btn-lg px-4">Upload Note</a>
-                {% endif %}
-            </div>
+    <!-- Greeting Section -->
+    <div class="d-flex justify-content-between align-items-center mb-4 mt-2">
+        <div>
+            {% if user.is_authenticated %}
+            <h1 class="fw-bold mb-0">Hi, {{ user.username }}!</h1>
+            {% else %}
+            <h1 class="fw-bold mb-0">Welcome to AcadVault</h1>
+            {% endif %}
+            <p class="text-muted">Find the best notes for your studies.</p>
         </div>
-        <div class="col-lg-6 d-none d-lg-block">
-            <img src="https://illustrations.popsy.co/amber/student-going-to-school.svg" alt="Students"
-                class="img-fluid">
+        {% if user.is_authenticated %}
+        <a href="#" class="text-decoration-none text-muted">
+            <i class="bi bi-bell fs-4"></i>
+        </a>
+        {% endif %}
+    </div>
+
+    <!-- Search Bar -->
+    <div class="card mb-5 border-0">
+        <div class="card-body p-2">
+            <form action="{% url 'note_list' %}" method="get" class="d-flex align-items-center">
+                <i class="bi bi-search text-muted ms-3 me-2"></i>
+                <input type="text" name="search" class="form-control border-0 shadow-none bg-transparent"
+                    placeholder="Search for notes, subjects, or topics..." style="height: 3rem;">
+            </form>
         </div>
     </div>
 
-    <!-- Stats Section -->
-    <div class="row text-center mb-5 g-4">
-        <div class="col-md-4">
-            <div class="card h-100 py-4 border-0 shadow-sm bg-white">
-                <div class="card-body">
-                    <h2 class="display-5 fw-bold text-primary">{{ total_notes }}</h2>
-                    <p class="text-muted mb-0">Total Notes</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card h-100 py-4 border-0 shadow-sm bg-white">
-                <div class="card-body">
-                    <h2 class="display-5 fw-bold text-success">{{ total_downloads }}</h2>
-                    <p class="text-muted mb-0">Total Downloads</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card h-100 py-4 border-0 shadow-sm bg-white">
-                <div class="card-body">
-                    <h2 class="display-5 fw-bold text-info">Free</h2>
-                    <p class="text-muted mb-0">Forever</p>
-                </div>
-            </div>
-        </div>
+    <!-- Recently Uploaded -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="fw-bold mb-0">Recently Uploaded</h4>
+        <a href="{% url 'note_list' %}" class="text-primary text-decoration-none fw-bold small">See All</a>
     </div>
 
-    <!-- Recent Notes -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold">Recent Uploads</h2>
-        <a href="{% url 'note_list' %}" class="text-decoration-none">View All <i class="bi bi-arrow-right"></i></a>
-    </div>
-
-    <div class="row g-4">
+    <div class="row g-3">
         {% for note in recent_notes %}
         <div class="col-md-6 col-lg-4">
-            <div class="card h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        <span class="badge bg-light text-primary border">{{ note.get_branch_display }}</span>
-                        <small class="text-muted">{{ note.upload_date|date:"M d, Y" }}</small>
+            <div class="card h-100 p-3">
+                <div class="d-flex align-items-start gap-3">
+                    <div class="bg-primary bg-opacity-10 rounded p-3 d-flex align-items-center justify-content-center"
+                        style="width: 50px; height: 50px;">
+                        <i class="bi bi-file-text text-primary fs-4"></i>
                     </div>
-                    <h5 class="card-title fw-bold mb-1">
-                        <a href="{% url 'note_detail' note.pk %}"
-                            class="text-decoration-none text-dark stretched-link">{{ note.title }}</a>
-                    </h5>
-                    <p class="text-muted small mb-3">{{ note.subject }}</p>
-                    <p class="card-text text-muted small text-truncate">{{ note.description }}</p>
-                </div>
-                <div class="card-footer bg-white border-top-0 pt-0">
-                    <div class="d-flex justify-content-between align-items-center small text-muted">
-                        <span><i class="bi bi-person"></i> {{ note.uploader.username }}</span>
-                        <span><i class="bi bi-download"></i> {{ note.download_count }}</span>
+                    <div class="flex-grow-1">
+                        <h5 class="fw-bold mb-1 text-truncate">
+                            <a href="{% url 'note_detail' note.pk %}"
+                                class="text-decoration-none text-light stretched-link">
+                                {{ note.title }}
+                            </a>
+                        </h5>
+                        <p class="text-muted small mb-2">{{ note.subject }} • {{ note.get_branch_display }}</p>
+                        <div class="d-flex align-items-center text-muted small">
+                            <span>by {{ note.uploader.username }}</span>
+                        </div>
                     </div>
                 </div>
             </div>
