@@ -161,3 +161,33 @@ h1, h2, h3, h4, h5, h6 {
 ::-webkit-scrollbar-thumb:hover {
     background: var(--text-muted);
 }
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    /* Typography Scaling */
+    h1 { font-size: 1.75rem; }
+    h2 { font-size: 1.5rem; }
+    h3 { font-size: 1.25rem; }
+    
+    /* Navbar Adjustments */
+    .navbar-brand { font-size: 1.25rem; }
+    .navbar-toggler { border-color: var(--border-color); }
+    .navbar-toggler:focus { box-shadow: none; }
+    
+    /* Layout & Spacing */
+    .container { padding-left: 1rem; padding-right: 1rem; }
+    .card { margin-bottom: 1rem; }
+    
+    /* FAB Adjustment for Mobile */
+    .fab {
+        bottom: 1.5rem;
+        right: 1.5rem;
+        width: 3rem;
+        height: 3rem;
+    }
+    
+    /* Form Adjustments */
+    .form-control, .btn {
+        font-size: 0.95rem;
+    }
+}

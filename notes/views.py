@@ -10,7 +10,7 @@ from .forms import SignUpForm, LoginForm, NoteUploadForm, ReviewForm
 
 def home(request):
     """Home page view showing recent notes and statistics."""
-    recent_notes = Note.objects.all()[:6]
+    recent_notes = Note.objects.select_related('uploader').all()[:6]
     total_notes = Note.objects.count()
     total_downloads = sum(note.download_count for note in Note.objects.all())
     
@@ -24,7 +24,7 @@ def home(request):
 
 def note_list(request):
     """List all notes with filtering and search."""
-    notes = Note.objects.all()
+    notes = Note.objects.select_related('uploader').all()
     
     # Search functionality
     search_query = request.GET.get('search', '')
